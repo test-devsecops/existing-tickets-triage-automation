@@ -7,6 +7,7 @@ from datetime import datetime
 
 import string
 import re
+import math
 
 class HelperFunctions:
     logger = Logger(create_log_file=False)
@@ -33,6 +34,16 @@ class HelperFunctions:
         if all(char in string.printable for char in text):
             return True
         return False
+
+    @staticmethod
+    def is_missing_or_unreadable(value):
+        """
+        Returns True if the value is NaN, None, empty, or not readable as a string.
+        """
+        is_nan = isinstance(value, float) and math.isnan(value)
+        if is_nan or not value or not HelperFunctions.is_readable(str(value)):
+            return True
+        return False
     
     @staticmethod
     def get_nested(data, keys, default=None):
@@ -52,7 +63,7 @@ class HelperFunctions:
         return data
     
     @staticmethod
-    def shorten_strings_middle(s, front=6, back=4):
+    def shorten_strings_middle(s, front=4, back=3):
         return s if len(s) <= (front + back) else s[:front] + "..." + s[-back:]
     
     @staticmethod

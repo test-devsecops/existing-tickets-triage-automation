@@ -1,7 +1,5 @@
 from checkmarx_utility.cx_config_utility import Config
 from checkmarx_utility.cx_api_endpoints import CxApiEndpoints
-
-from utils.exception_handler import ExceptionHandler
 from utils.http_utility import HttpRequests
 
 import time
@@ -19,7 +17,6 @@ class AccessTokenManager:
 
         self.refresh_token, self.tenant_name, self.tenant_iam_url, self.tenant_url = self.config.get_config()
 
-    @ExceptionHandler.handle_exception
     def fetch_new_token(self):
 
         endpoint = self.apiEndpoints.openid_token(self.tenant_name)
@@ -36,15 +33,24 @@ class AccessTokenManager:
 
         encoded_data = urlencode(data)
         response = self.httpRequest.post_api_request(url, headers, encoded_data)
-        raw_token = response.get("access_token")
+        raw_token = None
 
-        if raw_token:
-            self._cached_token = raw_token
-            self._expiry = time.time() + response.get("expires_in", 1800) - 10
+        if response and response.get("success"):
+            data = response.get("data", {})
+            raw_token = data.get("access_token")
+            if raw_token:
+                self._cached_token = raw_token
+                self._expiry = time.time() + data.get("expires_in", 1800) - 10
+                if self.logger:
+                    self.logger.info("Generated new token")
+                else:
+                    print("Generated new token")
+        else:
+            error_details = response.get("error") if response else "No response"
             if self.logger:
-                self.logger.info("Generated new token")
+                self.logger.error(f"Failed to fetch token: {error_details}")
             else:
-                print("Generated new token")
+                print(f"Failed to fetch token: {error_details}")
 
         return raw_token
 

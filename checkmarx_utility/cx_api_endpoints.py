@@ -20,16 +20,36 @@ class CxApiEndpoints:
         endpoint = f"/api/sast-results"
         return endpoint
     
+    @staticmethod
+    def sast_predicates():
+        endpoint = f"/api/sast-results-predicates/"
+        return endpoint
+    
+    @staticmethod
+    def sca_vuln_details_graphql():
+        endpoint = f"/api/sca/graphql/graphql"
+        return endpoint
+    
+    @staticmethod
+    def sca_management_of_risk():
+        endpoint = f"/api/sca/management-of-risk/package-vulnerabilities"
+        return endpoint
+    
+    @staticmethod
+    def csec_vuln_details_graphql():
+        endpoint = f"/api/containers/buffet/graphql"
+        return endpoint
+    
+    @staticmethod
+    def csec_vulnerability_triage_update():
+        endpoint = f"/api/containers/triage/triage/vulnerability-update"
+        return endpoint
+    
     # ---------------------------------------
 
     @staticmethod
     def sca_update_package():
         endpoint = "/api/sca/management-of-risk/packages/bulk"
-        return endpoint
-    
-    @staticmethod
-    def sca_vuln_details_graphql():
-        endpoint = "/api/sca/graphql/graphql"
         return endpoint
     
     @staticmethod
