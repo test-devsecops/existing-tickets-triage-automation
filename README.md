@@ -1,12 +1,12 @@
 # Existing Tickets Triage Automation
 
-This project automates the triage of security findings from Excel files, integrating with Checkmarx. It processes Excel files in a specified folder, updates findings in Checkmarx, and summarizes the results.
+This project automates the triage of security findings from Excel files, integrating with Checkmarx APIs. It processes Excel files in a specified folder, updates findings in Checkmarx, and summarizes the results.
 
 ---
 
 ## Setting up the .env File
 
-Before running the script, you must set up your environment variables for Checkmarx and JIRA API access.  
+Before running the script, you must set up your environment variables for Checkmarx API access.  
 **All required variables are set in a single file: `checkmarx_utility/.env`.**
 
 1. **Copy the sample file:**
@@ -18,10 +18,10 @@ Before running the script, you must set up your environment variables for Checkm
 
    | Variable Name         | Description                                      |
    |----------------------|--------------------------------------------------|
-   | `CX_TENANT_NAME`     | Your Checkmarx tenant name                       |
-   | `CX_TENANT_IAM_URL`  | Checkmarx IAM (Identity) URL                     |
-   | `CX_TENANT_URL`      | Checkmarx API base URL                           |
-   | `CX_TOKEN`           | Checkmarx API client secret                      |
+   | `CX_TOKEN`           | Checkmarx API token (if used for authentication)  |
+   | `TENANT_NAME`        | Your Checkmarx tenant name                       |
+   | `TENANT_IAM_URL`     | Checkmarx IAM (Identity) URL                     |
+   | `TENANT_URL`         | Checkmarx API base URL                           |
 
    > **Tip:** You can obtain these values from your Checkmarx administrator or your organization's API management portal.
 
@@ -55,7 +55,7 @@ python3 existing_tickets_triage.py -date YYYYMMDD [--sheet_name SHEET] [--excel_
 1. **Argument Parsing**: Parses command-line arguments for date, sheet name, and Excel file.
 2. **Folder and File Selection**: Determines the target folder (`jira_tickets/{date}`) and Excel files to process.
 3. **Processing Each Excel File**:
-    - Reads JIRA ticket ID, DevSecOps type, and report URL from the Excel file.
+    - Reads ticket ID, DevSecOps type, and report URL from the Excel file.
     - Extracts project and scan IDs from the report URL.
     - Verifies scan ID via Checkmarx API.
     - Depending on the DevSecOps type (`SAST`, `SCA`, `CSEC`), processes the file accordingly:
@@ -63,7 +63,7 @@ python3 existing_tickets_triage.py -date YYYYMMDD [--sheet_name SHEET] [--excel_
         - Maps triage status to Checkmarx state/severity.
         - Updates findings in Checkmarx via API.
     - Logs results and accumulates a summary for each file.
-4. **Summary Generation**: After processing, writes a markdown summary table (`triage_run_summary.md`) with Excel file, JIRA ticket, DevSecOps type, and status.
+4. **Summary Generation**: After processing, writes a markdown summary table (`triage_run_summary.md`) with Excel file, ticket, DevSecOps type, and status.
 5. **GitHub Actions Integration**: The workflow appends the summary to the GitHub Actions run summary.
 
 ---
@@ -88,9 +88,7 @@ existing-tickets-triage-automation/
 │   ├── exception_handler.py
 │   ├── helper_functions.py
 │   ├── http_utility.py
-│   ├── json_file_utility.py
 │   ├── logger.py
-│   └── yml_file_utility.py
 ├── logs/
 ├── .gitignore
 ```
@@ -105,15 +103,13 @@ existing-tickets-triage-automation/
     - `cx_api_endpoints.py`: API endpoint definitions for Checkmarx.
     - `cx_config_utility.py`: Utility for Checkmarx configuration.
     - `cx_token_manager.py`: Handles Checkmarx API authentication tokens.
-    - `.env_sample`: Sample environment variable file for Checkmarx and JIRA credentials.
-- **utils/**: Utility modules for Excel reading, logging, HTTP requests, and file handling.
+    - `.env_sample`: Sample environment variable file for Checkmarx credentials.
+- **utils/**: Utility modules for Excel reading, logging, HTTP requests, and helper functions.
     - `excel_reader.py`: Reads data from Excel files.
     - `exception_handler.py`: Custom exception handling utilities.
     - `helper_functions.py`: Helper functions for data extraction and formatting.
     - `http_utility.py`: HTTP request utilities.
-    - `json_file_utility.py`: JSON file read/write utilities.
     - `logger.py`: Logging utility for console and file logs.
-    - `yml_file_utility.py`: YAML file read/write utilities.
 - **logs/**: Directory for log files generated during script execution.
 - **.gitignore**: Specifies files and directories to be ignored by git.
 

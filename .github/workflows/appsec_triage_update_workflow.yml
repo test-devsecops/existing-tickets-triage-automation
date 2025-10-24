@@ -55,7 +55,6 @@ jobs:
         run: |
           python3 existing_tickets_triage.py \
             -date "${{ github.event.inputs.date }}" \
-            -col "B" \
             $(if [ -n "${{ github.event.inputs.excel_file }}" ]; then echo "--excel_file ${{ github.event.inputs.excel_file }}"; fi)
 
       - name: Add triage summary to workflow run summary
