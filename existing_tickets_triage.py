@@ -44,6 +44,7 @@ def main(folder_path, column, sheet_name=None, excel_file=None):
         log.info(f"No Excel files found in folder: {folder_path}")
         return
 
+    summary_rows = []
     for excel_file in excel_files:
         file_path = os.path.join(folder_path, excel_file)
         log.info(f"Processing file: {excel_file}")
@@ -428,14 +429,36 @@ def main(folder_path, column, sheet_name=None, excel_file=None):
             # Summary log after processing all vulnerabilities in the file
             if success_count > 0 and fail_count == 0:
                 log.success(f"Successfully processed with no failures. Excel sheet: {excel_file} - JIRA Ticket: {jira_ticket_id}")
+                summary_status = "Successful"
             elif success_count > 0 and fail_count > 0:
                 log.warning(f"Successfully processed but with some warnings. Excel sheet: {excel_file} - JIRA Ticket: {jira_ticket_id}")
+                summary_status = "Successful with warnings"
             elif success_count == 0 and fail_count > 0:
                 log.error(f"Totally failed the process. Excel sheet: {excel_file} - JIRA Ticket: {jira_ticket_id}")
+                summary_status = "Failed"
+
+            summary_rows.append({
+                "excel_file": excel_file,
+                "jira_ticket_id": jira_ticket_id,
+                "status": summary_status
+            })
 
         except Exception as e:
             log.error(f"Error reading {file_path}: {e}")
+            summary_rows.append({
+                "excel_file": excel_file,
+                "jira_ticket_id": jira_ticket_id,
+                "status": "Failed"
+            })
             continue
+
+    # Write summary to markdown file for GitHub Actions summary
+    if summary_rows:
+        summary_md = "| Excel File | JIRA Ticket | Status |\n|---|---|---|\n"
+        for row in summary_rows:
+            summary_md += f"| {row['excel_file']} | {row['jira_ticket_id']} | {row['status']} |\n"
+        with open("triage_run_summary.md", "w") as f:
+            f.write(summary_md)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

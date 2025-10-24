@@ -57,3 +57,10 @@ jobs:
             -date "${{ github.event.inputs.date }}" \
             -col "B" \
             $(if [ -n "${{ github.event.inputs.excel_file }}" ]; then echo "--excel_file ${{ github.event.inputs.excel_file }}"; fi)
+
+      - name: Add triage summary to workflow run summary
+        if: always()
+        run: |
+          if [ -f triage_run_summary.md ]; then
+            cat triage_run_summary.md >> $GITHUB_STEP_SUMMARY
+          fi
