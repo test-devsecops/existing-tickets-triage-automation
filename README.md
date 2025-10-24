@@ -4,6 +4,32 @@ This project automates the triage of security findings from Excel files, integra
 
 ---
 
+## Setting up the .env File
+
+Before running the script, you must set up your environment variables for Checkmarx and JIRA API access.  
+**All required variables are set in a single file: `checkmarx_utility/.env`.**
+
+1. **Copy the sample file:**
+   ```bash
+   cp checkmarx_utility/.env_sample checkmarx_utility/.env
+   ```
+
+2. **Edit `checkmarx_utility/.env` and fill in the required values:**
+
+   | Variable Name         | Description                                      |
+   |----------------------|--------------------------------------------------|
+   | `CX_TENANT_NAME`     | Your Checkmarx tenant name                       |
+   | `CX_TENANT_IAM_URL`  | Checkmarx IAM (Identity) URL                     |
+   | `CX_TENANT_URL`      | Checkmarx API base URL                           |
+   | `CX_TOKEN`           | Checkmarx API client secret                      |
+
+   > **Tip:** You can obtain these values from your Checkmarx administrator or your organization's API management portal.
+
+3. **Never commit your `.env` file to version control.**  
+   The `.gitignore` is already set up to exclude it.
+
+---
+
 ## How to Run the Script
 
 You can run the main script from the command line:
@@ -79,7 +105,7 @@ existing-tickets-triage-automation/
     - `cx_api_endpoints.py`: API endpoint definitions for Checkmarx.
     - `cx_config_utility.py`: Utility for Checkmarx configuration.
     - `cx_token_manager.py`: Handles Checkmarx API authentication tokens.
-    - `.env_sample`: Sample environment variable file for Checkmarx credentials.
+    - `.env_sample`: Sample environment variable file for Checkmarx and JIRA credentials.
 - **utils/**: Utility modules for Excel reading, logging, HTTP requests, and file handling.
     - `excel_reader.py`: Reads data from Excel files.
     - `exception_handler.py`: Custom exception handling utilities.
@@ -109,6 +135,6 @@ python3 existing_tickets_triage.py -date 20251021 --excel_file ticket.xlsx
 
 ## Notes
 
-- Ensure all required environment variables and API credentials are set (see `.env_sample`).
+- Ensure all required environment variables and API credentials are set in `checkmarx_utility/.env` (see `.env_sample`).
 - The script is designed to be run both locally and via GitHub Actions.
 - The summary of each run is available in `triage_run_summary.md` and in the GitHub Actions run summary.
