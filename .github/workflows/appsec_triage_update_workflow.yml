@@ -1,0 +1,59 @@
+name: Appsec Triage - Update CX Finding
+run-name: Checmkarx Triage Update - ${{ github.event.inputs.excel_file && format('({0})', github.event.inputs.excel_file) || (github.event.inputs.date && format('({0})', github.event.inputs.date)) || '' }}
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Date-named subfolder inside jira_tickets (e.g., 21102025)"
+        required: false
+        type: string
+      excel_file:
+        description: "Excel file to process (e.g., ticket.xlsx)"
+        required: false
+        type: string
+
+jobs:
+  update-cx-finding:
+    runs-on: ubuntu-latest
+
+    env:
+      CX_TOKEN: ${{ secrets.CX_TOKEN }}
+      CX_TENANT_NAME: ${{ vars.CX_TENANT_NAME }}
+      CX_TENANT_IAM_URL: ${{ vars.CX_TENANT_IAM_URL }}
+      CX_TENANT_URL: ${{ vars.CX_TENANT_URL }}
+      JIRA_PAT: ${{ secrets.JIRA_PAT }}
+      JIRA_PROJECT_ID: ${{ vars.JIRA_PROJECT_ID }}
+      JIRA_URL: ${{ vars.JIRA_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Update CX Finding Script
+        run: |
+          python3 existing_tickets_triage.py \
+            -date "${{ github.event.inputs.date }}" \
+            -col "B" \
+            $(if [ -n "${{ github.event.inputs.excel_file }}" ]; then echo "--excel_file ${{ github.event.inputs.excel_file }}"; fi)
