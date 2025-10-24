@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       date:
-        description: "Date-named subfolder inside jira_tickets (e.g., 21102025)"
+        description: "Date-named subfolder inside jira_tickets Format: YYYYMMDD (e.g., 20251021)"
         required: false
         type: string
       excel_file:
