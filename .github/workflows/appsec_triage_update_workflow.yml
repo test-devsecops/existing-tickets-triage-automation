@@ -1,5 +1,5 @@
 name: Appsec Triage - Update CX Finding
-run-name: Appsec Triage Update - ${{ github.event.inputs.excel_file && format('({0})', github.event.inputs.excel_file) || (github.event.inputs.date && format('({0})', github.event.inputs.date)) || '' }}
+run-name: Appsec Triage Update - ${{ github.event.inputs.excel_file && format('({0})', github.event.inputs.excel_file) || (github.event.inputs.date && format('({0})', github.event.inputs.date)) || 'Triggered by Pull Request' }}
 
 on:
   push:
