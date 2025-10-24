@@ -1,6 +1,6 @@
 # Existing Tickets Triage Automation
 
-This project automates the triage of security findings from Excel files, integrating with Checkmarx and JIRA APIs. It processes Excel files in a specified folder, updates findings in Checkmarx, and summarizes the results.
+This project automates the triage of security findings from Excel files, integrating with Checkmarx. It processes Excel files in a specified folder, updates findings in Checkmarx, and summarizes the results.
 
 ---
 
