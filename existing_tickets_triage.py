@@ -422,10 +422,6 @@ def main(folder_path, column, sheet_name=None, excel_file=None):
                 log.warning(f"Unknown scan type in B5: {devsecops_type}. Skipping file.")
                 continue
 
-            scan_details = cx_api_actions.get_scan_details(scan_id)
-            if scan_details is None:
-                raise ValueError(f"Scan ID {scan_id} is empty or does not exist")
-
             # Summary log after processing all vulnerabilities in the file
             if success_count > 0 and fail_count == 0:
                 log.success(f"Successfully processed with no failures. Excel sheet: {excel_file} - JIRA Ticket: {jira_ticket_id}")
@@ -440,6 +436,7 @@ def main(folder_path, column, sheet_name=None, excel_file=None):
             summary_rows.append({
                 "excel_file": excel_file,
                 "jira_ticket_id": jira_ticket_id,
+                "scan_type": scan_type,
                 "status": summary_status
             })
 
@@ -448,15 +445,16 @@ def main(folder_path, column, sheet_name=None, excel_file=None):
             summary_rows.append({
                 "excel_file": excel_file,
                 "jira_ticket_id": jira_ticket_id,
+                "scan_type": None,
                 "status": "Failed"
             })
             continue
 
     # Write summary to markdown file for GitHub Actions summary
     if summary_rows:
-        summary_md = "| Excel File | JIRA Ticket | Status |\n|---|---|---|\n"
+        summary_md = "| Excel File | JIRA Ticket | DevSecOps Type | Status |\n|---|---|---|---|\n"
         for row in summary_rows:
-            summary_md += f"| {row['excel_file']} | {row['jira_ticket_id']} | {row['status']} |\n"
+            summary_md += f"| {row['excel_file']} | {row['jira_ticket_id']} | {row['scan_type']} | {row['status']} |\n"
         with open("triage_run_summary.md", "w") as f:
             f.write(summary_md)
 
