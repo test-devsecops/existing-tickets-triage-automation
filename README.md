@@ -9,7 +9,7 @@ This project automates the triage of security findings from Excel files, integra
 You can run the main script from the command line:
 
 ```bash
-python3 existing_tickets_triage.py -date YYYYMMDD -col B [--sheet_name SHEET] [--excel_file FILENAME]
+python3 existing_tickets_triage.py -date YYYYMMDD [--sheet_name SHEET] [--excel_file FILENAME]
 ```
 
 ### Arguments
@@ -17,15 +17,16 @@ python3 existing_tickets_triage.py -date YYYYMMDD -col B [--sheet_name SHEET] [-
 | Argument         | Required | Description                                                                                  |
 |------------------|----------|----------------------------------------------------------------------------------------------|
 | `-date` / `--date`        | No       | Date-named subfolder inside `jira_tickets` (e.g., `20251021`). If not provided, uses today's date. |
-| `-col` / `--column`       | No       | Column letter or 0-based index to read (e.g., `B` or `1`). Defaults to `B`.                    |
 | `-sheet` / `--sheet_name` | No       | Optional sheet name (default: first sheet).                                                   |
 | `--excel_file`            | No       | Optional Excel file to process (e.g., `ticket.xlsx`). If not provided, processes all files in the folder. |
+
+> **Note:** The script always reads from column 'B' in the Excel files.
 
 ---
 
 ## Script Logical Flow
 
-1. **Argument Parsing**: Parses command-line arguments for date, column, sheet name, and Excel file.
+1. **Argument Parsing**: Parses command-line arguments for date, sheet name, and Excel file.
 2. **Folder and File Selection**: Determines the target folder (`jira_tickets/{date}`) and Excel files to process.
 3. **Processing Each Excel File**:
     - Reads JIRA ticket ID, DevSecOps type, and report URL from the Excel file.

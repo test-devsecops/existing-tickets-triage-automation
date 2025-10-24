@@ -20,7 +20,7 @@ def _get_cx_state_severity_score(triage_values_mapping, triage_status):
     cx_score = triage_value.get('score', None)  # For CSEC, score is just the severity string from the mapping
     return cx_state, cx_severity, cx_score
 
-def main(folder_path, column, sheet_name=None, excel_file=None):
+def main(folder_path, sheet_name=None, excel_file=None):
 
     log = Logger(create_log_file=False)
     access_token_manager = AccessTokenManager(logger=log)
@@ -463,7 +463,6 @@ if __name__ == "__main__":
         description="Process Excel files in jira_tickets/{date_folder} and read a dynamic cell range."
     )
     parser.add_argument("-date", "--date", required=False, help="Date-named subfolder inside jira_tickets (e.g., 21102025)")
-    parser.add_argument("-col", "--column", default="B", help="Column letter or 0-based index to read (e.g., B or 1). Defaults to B if not specified.")
     parser.add_argument("-sheet", "--sheet_name", required=False, help="Optional sheet name (default: first sheet)")
     parser.add_argument("--excel_file", required=False, help="Optional Excel file to process (e.g., ticket.xlsx)")
 
@@ -474,11 +473,7 @@ if __name__ == "__main__":
     base_folder = os.path.join(os.getcwd(), "jira_tickets")
     folder_path = os.path.join(base_folder, date_value)
 
-    # Accept both column letter and index
-    try:
-        column = int(args.column)
-    except ValueError:
-        column = args.column
+    # No column argument needed; always uses column 'B'
 
     if not os.path.isdir(folder_path):
         print(f"Folder does not exist: {folder_path}")
@@ -492,14 +487,12 @@ if __name__ == "__main__":
             sys.exit(1)
         main(
             folder_path=folder_path,
-            column=column,
             sheet_name=args.sheet_name,
             excel_file=args.excel_file
         )
     else:
         main(
             folder_path=folder_path,
-            column=column,
             sheet_name=args.sheet_name,
             excel_file=None
         )
