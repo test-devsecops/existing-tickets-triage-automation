@@ -68,7 +68,7 @@ python3 existing_tickets_triage.py -date YYYYMMDD [--sheet_name SHEET] [--excel_
 
 ---
 
-## File Structure Testing
+## File Structure
 
 ```
 existing-tickets-triage-automation/
